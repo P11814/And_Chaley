@@ -1,0 +1,96 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
+namespace LaabHomeTask_1
+{
+    class Program
+    {
+          static bool isDayOfWeek(string value)
+          {
+              switch (value)
+              {
+                  case "понедельник":
+          Console.WriteLine("Понедельник. Спешим на учёбу! Ур-р-р-А!");
+          return true;
+                     case "среда":
+                     Console.WriteLine("По средам мы ходим в баню. Ай-да!");
+                     return true;
+                     default:
+                     Console.WriteLine("Сегодня не твой день. Гуд бай!");
+                     return true;
+              }
+          }
+        
+        static void Main(string[] args)
+        {
+           /* var x = 7; var y = 8.6; var z = 8.3F; var ch = 'a'; var str = "Opanki";
+            Console.WriteLine("Type of \"x\"= " + x.GetType() + "\nType of \"y\"= " + y.GetType() + "\nType of \"z\"= "
+                + z.GetType() + "\nType of \"ch\"= " + ch.GetType() + "\nType of \"str\"= " + str.GetType()); */
+
+            // Задание 4. Проверка на  интервал 21.7-36.5 с дополнительным условием  X >100
+
+          /*  Задание 5. Оператор switch. Проверка на попадание в список значений
+                         Список допустимых значений:  “понедельник”,”среда” */
+            
+           
+            int day, month, year;
+            Console.WriteLine("\nВведите последовательно следующие данные: год, месяц, день, нажимая между ними \"Enter\":");
+            year = int.Parse(Console.ReadLine());
+            month = int.Parse(Console.ReadLine());
+            day= int.Parse(Console.ReadLine());
+            DateTime dt = new DateTime(year, month, day);
+           
+      // But I can't create an pattern of our Belarus culture.                                 
+            CultureInfo culture = CultureInfo.CreateSpecificCulture("en-BY");
+            Console.WriteLine(dt.ToString("D", culture));  
+            Console.WriteLine("Дай Бог памяти, какой же это день был {0:d}:Четверг? Правда? Ответ = {1}!",
+                               dt, dt.DayOfWeek == DayOfWeek.Thursday);
+            Console.WriteLine("На эту дату {0:d} припадал денёк {1}.", dt, dt.DayOfWeek);
+                      
+            switch (dt.DayOfWeek.ToString())
+            {
+                case "Monday": 
+                    Console.WriteLine("Понедельник. Спешим на учёбу! Ур-р-р-А!");
+                    break;
+                case "Wednesday":
+                    Console.WriteLine("По средам мы ходим в баню. Ай-да!");
+                    break;
+                default:
+                    Console.WriteLine("Сегодня не твой день. Гуд бай!");
+                    break;
+            }
+            string dayПоРусски;
+            Console.WriteLine("Введите день недели на русском языке(lower case), нажимая в конце \"Enter\":");
+            dayПоРусски=Console.ReadLine();
+            Console.WriteLine(isDayOfWeek(dayПоРусски));
+            
+//Задание 6. Операторы циклов (использовать  операторы while, do-while и for) Вывести 19 значений выражения: X*X+2 в интервале: -2..0
+            float res = 0.0F; float x1=-2.0F, dltx=0.1F;
+            while (x1 <= 0)
+            {
+                res = x1 * x1 + 2;
+                Console.Write("{0:F2} ",res);
+                x1 += dltx;
+            }
+            
+//Задание 7. Определить сумму наименьшей и наибольшей цифры в числе
+            string numerical; char min, max;
+            Console.WriteLine("Введите любое целое число.");
+            numerical= Console.ReadLine();
+            min=max=numerical[0]; 
+            for (int i=1; i<numerical.Length; i++)
+            {
+                if (numerical[i] > max)  
+                    max = numerical[i];
+                if (numerical[i] < min)
+                    min = numerical[i];
+             }
+           int sumMinMax = (int)min-48 + (int)max-48;
+           Console.WriteLine("Сумма наименьшшей и наибольшей цифр введённого числа = {0};", sumMinMax);
+            Console.Write("\nПри этом: Минимальная цифра введённого числа = {0}\n\t  Максимальная цифра введённого числа= {1}.\n",(char)min, (char)max);
+        }
+    }
+}
