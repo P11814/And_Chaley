@@ -1,0 +1,74 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApplication1
+{
+    class Program
+    {
+        static int Fctrl(int n)
+        {
+           int fct = 1;
+                for (int i = 1; i <= n; ++i) fct *= i;
+                return fct;
+         }
+        
+        static void Main(string[] args)
+        {
+            Console.SetWindowSize(84, 40);
+
+            //Задание 8. Рассчитать сумму чисел 100 Фибоначчи : 1, 1, 2, 3, 5, 8 ..   Xn=X(n-1)+X(n-2)
+            ulong numCur=0, numPrev1=0, numPrev2=0, numSt = 1, sumOrder=0; short count=1, nNFib;
+            Console.WriteLine("Введите порядковый номер числа окончания тестируемого ряда Фибоначчи:");
+            nNFib=short.Parse(Console.ReadLine());
+            do
+            {
+                //numCur = numSt;
+                if (count <= 3) { 
+                   numPrev1 = numPrev2 + numSt;
+                   numCur = numPrev1 + numPrev2;
+                    }
+                 if (count >= 3)
+                 {
+                    // numPrev2 = numSt;
+                    //;
+                    numPrev2 = numPrev1;
+                    numPrev1 = numCur;
+                    numSt = 0;
+                    numCur = numPrev1 + numPrev2;
+                 }
+                Console.Write("{0,20};",numCur);
+                count++; sumOrder += numCur;
+            } while (count <= nNFib);
+            Console.WriteLine(("\n").PadRight(24, '-'));
+            Console.WriteLine("Сумма {0} чисел ряда Фибоначчи = {1:n}!!!\n",count-1,sumOrder); 
+
+   /*         Задание 9_доп 
+1) Разработать консольное прилож. Функция представлена в виде ряда Тейлора. Вычислить приближённое значение суммы этого бесконечного ряда. При вычислении следующего слагаемого использовать значение предыдущего слагаемого, полученного на предыдущей итерации.
+2) Вычисления заканчивать, когда очередное слагаемое окажется по модулю меньше заданного числа e. 
+3) e удовлет. условию: 0 < e < 10-k, k – нат.число, k >= 1, k задает кол-во верных знаков  после дес.точки в вычисленной сумме ряда.
+4) Параметры x и k  вводить с клавиатуры.
+5) Сравнить результат со значением, вычисленным через стандартные функции (use библиотеку math.h). Для этого вывести на экран это значение. Два выведенных значения должны совпадать с заданной точностью, т.е. k знаков после десятичной точки. При выводе чисел использовать форматирование, выводить точно k знаков после десятичной точки.
+6) Вывести в отдельной строке количество слагаемых, требуемых для вычислений.
+sqr(1+x)=1+(1/2)*x-(1/2*4)*x*x+(1*3/2*4*6)*x*x*x-..., x=<-1;1> */
+            int k; double e, x; double sqrT = 0;
+            Console.WriteLine("Для вычисления корня квадратного из выражения (1+х) введите последовательно число Х в интервале от -1 до +1,");
+            Console.WriteLine("затем К - натуральное число, k >= 1, k задает кол-во верных знаков  после дес.точки в вычисленной сумме ряда.");
+            x = double.Parse(Console.ReadLine());
+            k = int.Parse(Console.ReadLine());
+            e = Math.Pow(10, -k);
+            int n=0;
+            do
+            {
+                sqrT += ((Math.Pow((-1), n) * Fctrl(2 * n)) / ((1 - 2 * n) * Math.Pow(Fctrl(n), 2) * Math.Pow(4, n))) * Math.Pow(x, n);
+                n++;
+            } while (Math.Abs((Math.Pow((-1), n) * Fctrl(2 * n) / (1 - 2 * n) * Math.Pow(Fctrl(n), 2) * Math.Pow(4, n)) * Math.Pow(x, n)) >= e);
+            Console.Write("Значение выражения, вычисленное рядом Тейлора = {0:F6}", sqrT);
+            Console.Write("\nЗначение выражения, вычисленное библиотекой = {0:F6}\n", Math.Sqrt(1+x));
+            Console.WriteLine("Количество слагаемых ряда, сформировавших результат: {0}.", n);
+        }
+    }
+}
+Enter file contents here
