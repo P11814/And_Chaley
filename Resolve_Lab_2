@@ -1,0 +1,156 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+
+namespace Lab_2_StringArray
+{
+    class Program
+    {
+        static int max = 0, min=9;
+        static int FindMax(int x)
+        {
+            max = (max >= x ? max : x);
+            return max;
+        }
+
+        static int FindMin(int x)
+        {
+            min = (min > x ? x : min);
+            return min;
+        }
+        static void Main(string[] args)
+        {
+         /*   Задание 1. Строки 8. Дана строка текста, в которой слова разделены пробелами. Необходимо:
+                              - определить количество слов в строке;
+                              - найти самое короткое слово в строке и вывести его;
+                              - поменять местами первое и последнее слова в строке, а затем вывести текст на экран. */
+           string[] myString=new string[]{"The foreach statement is used to iterate through the collection to get the information that you want, but can not be used to add or remove items from the source collection to avoid unpredictable side effects. If you need to add or remove items from the source collection, use a for loop. "};
+            string firstWord, lastWord, internalText, chanchedString="";
+            int[] _Words = new int[100];
+            int words = 0, w=0;
+           
+            foreach (string lineText in myString)
+            {
+                for (int i = 0; i < lineText.Length; i++) {
+                    if (lineText[i] != ' ')
+                        w++;
+                    if (lineText[i] == ' ') { 
+                      _Words[words] = w; w = 0;
+                      words++;
+                    }
+                } Console.WriteLine("Количество букв в строке = {0} букв.", lineText.Length-words);
+                Console.WriteLine();
+            }
+            Console.WriteLine("Количество слов в строке = {0} слов.",words);
+            
+            int min = _Words[0], max = _Words[0], indMin = 0, indMax = 0;
+            foreach (int letters in _Words)
+            {
+               for (int i = 1; i < _Words.Length; i++)
+                {
+                    if (_Words[i] > max)
+                    {
+                        max = _Words[i]; indMax=i;
+                    }
+                    if(_Words[i]<min&&_Words[i]!=0)
+                    { 
+                        min = _Words[i]; indMin=i;
+                    }
+                }
+             //  Console.Write("{0}; ", letters);    
+             }
+
+            Console.Write("\nmin слово содержит= {0} букв with index= {1};\nmax слово содержит= {2} букв with index= {3}.", min, indMin, max, indMax);
+            Console.Write("\n\nСамое короткое слово: \"");
+            int posMinWord=0;
+            for (int j = 0; j < indMin; j++)
+            {
+                posMinWord += _Words[j];
+            }
+
+           foreach (string searchWord in myString)
+           {
+               for (int i = posMinWord + indMin - 1; i < posMinWord + indMin + min; i++) 
+                 Console.Write(searchWord[i]);
+           } 
+           Console.Write("\".\n");
+
+           Console.Write("\nСамое длинное слово: \"");
+           int posMaxWord = 0;
+           for (int j = 0; j < indMax; j++)
+           {
+               posMaxWord += _Words[j];
+           }
+           
+           foreach (string searchWord in myString)
+           {
+               for (int i = posMaxWord + indMax - 1; i < posMaxWord + indMax + max; i++)
+                   Console.Write(searchWord[i]);
+           }
+           Console.Write("\".\n");
+
+           Console.WriteLine("\nНаша строка до перестановки первого и последнего слова:\n");
+           Console.WriteLine(myString[0]);
+           Console.Write("\nСамое первое слово: \"");
+           firstWord = myString[0].Substring(0, _Words[0]);
+           Console.WriteLine(firstWord);
+           Console.Write("\nПоследнее слово: \"");
+           lastWord=myString[0].Substring((myString[0].Length - _Words[words-1]-1), _Words[words-1]-1);
+           Console.Write(lastWord);
+           Console.Write("\".\n");
+           internalText = myString[0].Substring(_Words[0], (myString[0].Length - _Words[0] - _Words[words - 1]-1));
+           Console.WriteLine("Наша строка после перестановки первого и последнего слова:\n");
+            chanchedString=chanchedString.Insert(0,lastWord+internalText+firstWord);
+           Console.WriteLine("{0}.\n",chanchedString);  
+
+          //  Задание 2. Массивы: 8. Напишите программу для вывода и смены позиций максимального и минимального элементов рваного массива.  
+            int[][] arrTouth = new int[4][]; int coloumn=0, indMaxStr=0, indMaxCol=0, tempMax=0, indMinStr=0, indMinCol=0, tempMin=9;
+            Random rand=new Random();
+            for (int i = 0; i < 4; i++)
+            {
+                 coloumn=rand.Next(1,7);
+                arrTouth[i] = new int[coloumn];
+                for (int j = 0; j < coloumn; j++)
+                {
+                    arrTouth[i][j] = rand.Next(10);
+                    Console.Write("{0}; ",arrTouth[i][j]); 
+                    if (j == coloumn-1)
+                        Console.WriteLine();  
+                }
+            }
+                       
+          /*  Console.Write("Вывод 1-й строки: ");
+            foreach (int elemArray in arrTouth[1]) { 
+                Console.Write("{0}; ",elemArray);} */
+            Console.WriteLine();
+            //Console.WriteLine(arrTouth[0].Max());
+            for (int i = 0; i < 4; i++)
+            {
+                for (int testEl = 0; testEl < arrTouth[i].Length; testEl++)
+                {
+                    max = FindMax(arrTouth[i][testEl]);
+                    if (max > tempMax) { indMaxStr = i; indMaxCol = testEl; tempMax = max; }
+                    min = FindMin(arrTouth[i][testEl]);
+                    if (min < tempMin) { indMinStr = i; indMinCol = testEl; tempMin = min; }
+                }
+            }
+            Console.WriteLine("Первый максимальный элемент массива = {0}. Его позиция №{1} в {2}-й строке.",max,indMaxCol+1,indMaxStr+1);
+            Console.WriteLine("Первый минимальный элемент массива = {0}. Его позиция №{1} в {2}-й строке.", min, indMinCol+1,indMinStr+1);
+            // Меняем местами первый максимальный элемент массива и первый минимальный элемент массива
+            arrTouth[indMinStr][indMinCol] = tempMax;
+            arrTouth[indMaxStr][indMaxCol] = tempMin;
+            for (int i = 0; i < 4; i++) { 
+            foreach (int elemArray in arrTouth[i])
+            {
+                Console.Write("{0}; ", elemArray);
+            }
+            Console.WriteLine();
+            }
+        }
+    }
+}
+Enter file contents here
