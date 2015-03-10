@@ -24,7 +24,7 @@ namespace Lab_2_StringArray
         }
         static void Main(string[] args)
         {
-         /*   Задание 1. Строки 8. Дана строка текста, в которой слова разделены пробелами. Необходимо:
+         /* ЗАЧТЕНО  Задание 1. Строки 8. Дана строка текста, в которой слова разделены пробелами. Необходимо:
                               - определить количество слов в строке;
                               - найти самое короткое слово в строке и вывести его;
                               - поменять местами первое и последнее слова в строке, а затем вывести текст на экран. */
@@ -107,7 +107,7 @@ namespace Lab_2_StringArray
             chanchedString=chanchedString.Insert(0,lastWord+internalText+firstWord);
            Console.WriteLine("{0}.\n",chanchedString);  
 
-          //  Задание 2. Массивы: 8. Напишите программу для вывода и смены позиций максимального и минимального элементов рваного массива.  
+          // ЗАЧТЕНО Задание 2. Массивы: 8. Напишите программу для вывода и смены позиций максимального и минимального элементов рваного массива.  
             int[][] arrTouth = new int[4][]; int coloumn=0, indMaxStr=0, indMaxCol=0, tempMax=0, indMinStr=0, indMinCol=0, tempMin=9;
             Random rand=new Random();
             for (int i = 0; i < 4; i++)
@@ -154,3 +154,4 @@ namespace Lab_2_StringArray
     }
 }
 Enter file contents here
+//МОЛОДЦЫ!)
