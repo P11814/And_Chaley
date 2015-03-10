@@ -29,9 +29,9 @@ namespace LaabHomeTask_1
            /* var x = 7; var y = 8.6; var z = 8.3F; var ch = 'a'; var str = "Opanki";
             Console.WriteLine("Type of \"x\"= " + x.GetType() + "\nType of \"y\"= " + y.GetType() + "\nType of \"z\"= "
                 + z.GetType() + "\nType of \"ch\"= " + ch.GetType() + "\nType of \"str\"= " + str.GetType()); */
-
+//ЗАЧТЕНО
             // Задание 4. Проверка на  интервал 21.7-36.5 с дополнительным условием  X >100
-
+//ЗАЧТЕНО
           /*  Задание 5. Оператор switch. Проверка на попадание в список значений
                          Список допустимых значений:  “понедельник”,”среда” */
             
@@ -66,7 +66,7 @@ namespace LaabHomeTask_1
             Console.WriteLine("Введите день недели на русском языке(lower case), нажимая в конце \"Enter\":");
             dayПоРусски=Console.ReadLine();
             Console.WriteLine(isDayOfWeek(dayПоРусски));
-            
+ //ЗАЧТЕНО           
 //Задание 6. Операторы циклов (использовать  операторы while, do-while и for) Вывести 19 значений выражения: X*X+2 в интервале: -2..0
             float res = 0.0F; float x1=-2.0F, dltx=0.1F;
             while (x1 <= 0)
@@ -75,7 +75,7 @@ namespace LaabHomeTask_1
                 Console.Write("{0:F2} ",res);
                 x1 += dltx;
             }
-            
+ //ЗАЧТЕНО           
 //Задание 7. Определить сумму наименьшей и наибольшей цифры в числе
             string numerical; char min, max;
             Console.WriteLine("Введите любое целое число.");
