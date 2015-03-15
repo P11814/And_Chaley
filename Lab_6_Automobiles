@@ -1,0 +1,205 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
+/*
+Задания к лабораторной работе
+Выполнить задание согласно варианту. Продемонстрировать работу программы с помощью консольного приложения.
+Каждый разрабатываемый класс должен содержать следующие элементы: скрытые поля, конструкторы с параметрами и без параметров, методы, свойства, индексаторы, перегруженные операции. 
+Функциональные элементы класса должны обеспечивать непротиворечивый, полный и удобный интерфейс класса. При возникновении ошибок должны выбрасываться исключения. 
+В программе должна выполняться проверка всех разработанных элементов класса.
+8) Создать класс «Автомобиль», содержащий закрытые поля: госномер, цвет, фамилия владельца. Для каждого автомобиля указывается номер места и признак присутствия на стоянке. 
+Обеспечить проверку на правильность ввода данных. Предусмотреть свойства для получения состояния объекта.
+Создать класс «Автостоянка» для хранения сведений об автомобилях. Обеспечить возможность поиска автомобиля по разным критериям, вывода списка присутствующих и отсутствующих на стоянке автомобилей, 
+доступа к имеющимся сведениям по номеру места. */
+
+namespace Lab_6_Var_8
+{
+internal class Automobile
+{
+    internal string color;
+    internal string numberCar;
+    internal int numPlace;
+    internal string surnameOwner;
+    private byte size;
+   
+   public Automobile() { }
+   public Automobile(byte size)
+    {
+        this.size = size;
+    }
+
+    public Automobile(string _nameOwner, string _number, string _color)
+    {
+        this.surnameOwner = _nameOwner;
+        this.numberCar = _number;
+        this.color = _color;
+    } 
+
+    public string carsAtAparcamiento { get; internal set; }
+
+    public string SetGetCarColor
+    {
+        set { color = value; }
+        get { return color; }
+    }
+    public string SetGetStateNumber {
+        set { numberCar = value; }
+        get { return numberCar; }
+    } 
+} 
+class Aparcamiento :Automobile     {
+           public static byte maxPlace=127;
+           public byte currCntAutos;
+          // public string carsAtAparcamiento;
+    public Automobile[] AutosParked;
+           public Automobile this[byte index]
+           {
+               set {AutosParked[index]=value;}
+               get {return AutosParked[index];}
+           }
+    public Aparcamiento(byte Size)
+    {
+        AutosParked = new Automobile[Size];
+        currCntAutos = Size;
+    }
+}
+ class Program
+    {
+ 
+    static bool myTestCharacterInput(string it, int dig)   // Функция для проверки правильности символьного ввода 
+    {
+        for (int i = 0; i < dig; i++)
+        {
+            if ((it[i] < (int)'A' || it[i] > (int)'z') && it[i] != ' ' && (it[i] < 'А' || it[i] > 'я'))
+               return true;
+            else
+               continue;
+        }
+        return false;
+    }
+    static void Main(string[] args)
+        {
+            Console.SetWindowSize(108, 50);
+            string _nameOwner, _color; byte ordAutos;  // трафареты для ввода имени владельца, цвета авто и парка машин 
+            Console.WriteLine("Введите количество \"проданных\" автомобилей (в разумных пределах -> до 127 (по окончании нажмите \"Enter\"):");
+        try {
+            ordAutos = byte.Parse(Console.ReadLine()); }
+        catch (System.FormatException e)   // отслеживание правильности ввода данных с исправлением ошибки ввода
+        {
+            Console.WriteLine("Ошибка ввода числа проданных автомобилей:\n {0}", e.ToString());
+            Console.WriteLine("Мы исправили ошибку и установили условное число авто, подлежащих регистрации = 16.");
+            ordAutos = 16;
+        }
+        
+        Automobile[] AllAutos = new Automobile[ordAutos];  // создание парка авто, 
+            string[] _stateNumber = new string[ordAutos]; //  заготовка номеров
+        string[] nameOwner = new string[ordAutos];       //   и списка владельцев
+        string[] _colorAuto=new string[]{"красного","голубого","зелёного","жёлтого","белого","серого","чёрного","синего","фиолетового","серебристого"};
+        string[] _firstName = new string[]{ "Alex", "Bill", "Candy", "Boris", "Mikle", "Jane", "Robert", "Dane", "Andrew", "Clark" };
+        string[] _lastName = new string[]{ "Rite", "Brown", "Hendrix", "Morley", "Springstean", "Plant", "Lord", "Harrison", "Williams", "Jones" };
+        Console.WriteLine("Идёт регистрация автомобиля в органах ГАИ...\nВведите данные владельца: имя и фамилию через пробел. (по окончании нажмите \"Enter\")");
+
+        int testorder;
+        do
+        {
+            _nameOwner = Console.ReadLine();
+            testorder = _nameOwner.Length;
+            if (myTestCharacterInput(_nameOwner, testorder))  // проверка правильности символьного ввода
+            {
+                Console.WriteLine("ERROR: Вы ошиблись при вводе персональных данных! Введены не буквенные символы, будьте внимательны!\n Let's try again.");
+            }
+        } while (myTestCharacterInput(_nameOwner, testorder));
+
+        Automobile car1 = new Automobile(_nameOwner, "", "");  // создание 1-й машины конструктором вручную (для примера)
+         
+            Console.WriteLine("Сверьте данные владельца: {0}.", car1.surnameOwner);
+            Console.WriteLine("\nВведите цвет автомобиляа: (по окончании нажмите \"Enter\")");
+            _color = Console.ReadLine();
+            car1.SetGetCarColor = _color;  // выбор цвета для 1-й машины по желанию
+        Console.WriteLine("Сверьте цвет автомобиляа: {0}.", car1.SetGetCarColor);
+            Random ran = new Random();
+            for (int i = 0; i < 4; i++)    // автокомпоновка госномера
+            {
+                if (i == 2) _stateNumber[0] += '-';
+                _stateNumber[0] += (ran.Next(0, 9)).ToString();
+            }
+            _stateNumber[0] += " BC-7";
+            car1.SetGetStateNumber = _stateNumber[0];
+            Console.WriteLine("Регистрация автомобиля в органах ГАИ завершена.\nВашему автомобилю присвоен госномер: {0} {1}\n", car1.SetGetStateNumber,car1.SetGetCarColor);
+            AllAutos[0] = car1;  // 1-е авто возглавляет парк
+          
+            for (int i = 1, j; i < ordAutos; i++)   // авторегистрация всех "проданных" авто
+            {
+              //  AllAutos[i]=new Automobile();
+                for (j = 0; j < 4; j++)
+                {
+                    if (j == 2) _stateNumber[i] += '-';
+                    _stateNumber[i] += ran.Next(0, 9).ToString();
+                }
+            _stateNumber[i] += " BC-7";
+            nameOwner[i] += _firstName[ran.Next(0, 9)]+' ';
+            nameOwner[i] += _lastName[ran.Next(0, 9)];
+            
+            AllAutos[i] = new Automobile(nameOwner[i], _stateNumber[i], _colorAuto[ran.Next(0, 9)]);
+            }
+            Console.WriteLine("Регистрация всех автомобилей в органах ГАИ завершена. Автомобили могут начинать движение.\nНиже публикуем данные некоторых из них:\n");
+            byte n = 0;
+            foreach (Automobile testNumber in AllAutos) {
+                Console.WriteLine("\nЭтому автомобилю №({0}) {1} цвета владельца {2} присвоен госномер:  {3}.", n + 1, testNumber.color, testNumber.surnameOwner, testNumber.numberCar);
+               if (n == (ordAutos % 10 + 1)) break;
+                n++;
+            }
+        Console.WriteLine("\nЧтобы запустить автомобили в движение нажмите любую клавишу");
+        Console.ReadKey(true);
+        Console.WriteLine("\nSTART! Движение началось. Можете проверить, кто уже припарковался.\n");
+        Console.WriteLine("Чтобы просмотреть информацию по стоянке нажмите любую клавишу");
+        Console.ReadKey(true);
+        Aparcamiento carStoped = new Aparcamiento(Size: (byte)(ordAutos / 2));
+        Console.WriteLine("На стоянке сейчас припаркованы следующие автомобили:\n");
+        string lineInfo = String.Format("\n{0,-10}{1,8}\t{2,16}\t {3}\n","госномер авто:", "цвет:", "Владелец:", "парковочное место:");
+        Console.WriteLine(lineInfo);
+        byte k = (byte)ran.Next(1, ordAutos);
+       carStoped[0] = AllAutos[k];  //AutosParked[0]=AllAutos[k];
+      // парковка машин на стоянку
+        for (byte i = 1,z=0; i < carStoped.currCntAutos; i++)
+        {
+             k = (byte)ran.Next(1, ordAutos); 
+            for (byte t=0; t<i; t++) 
+                if (carStoped[t].surnameOwner == AllAutos[k].surnameOwner) z++;
+            if (z == 0)
+            {
+                AllAutos[i].numPlace = k;
+                carStoped[i] = AllAutos[k];
+
+                carStoped[i].carsAtAparcamiento = String.Format("{0,-10}\t{1,-11}\t{2,-16}\t{3,3}\n", carStoped[i].numberCar, carStoped[i].color, carStoped[i].surnameOwner, AllAutos[i].numPlace);
+                Console.Write(carStoped[i].carsAtAparcamiento);
+            }
+            else { i--; z = 0; }
+        }
+        
+        Console.WriteLine("\nМожно просмотреть данные по конкретному автомобилю из всех зарегистрированных.\nДля поиска по номеру введите номер авто в формате: хх-хх(без региона):");
+        string searchAuto = Console.ReadLine();
+        bool marker = true; k = 0;
+        foreach (Automobile search in AllAutos)  // поиск автомобиля по госномеру
+            if (marker = search.numberCar.Substring(0, 5) == searchAuto) {
+                Console.WriteLine("Данные по атомобилю с указанным номером:");
+             Console.WriteLine(search.surnameOwner+" "+search.numberCar+" "+search.color+" цвета");
+                k++; }
+            
+        if (marker == false)
+            if (k == 0)
+                Console.WriteLine("Автомобиль с таким номером не обнаружен");
+        Console.WriteLine("\nДля поиска по цвету введите цвет авто в родительном падеже из следующего перечня:\n\"красного\",\"голубого\",\"зелёного\",\"жёлтого\",\"белого\",\"серого\",\"чёрного\",\"синего\",\"фиолетового\",\"серебристого\"");
+        string searchColorAuto = Console.ReadLine();  k = 0;
+        foreach (Automobile search in AllAutos)  // поиск автомобиля по его цвету
+            if (marker=search.color == searchColorAuto) { 
+                Console.WriteLine(search.color + " цвета автомобиль с госномером " + search.numberCar + " Владелец " + search.surnameOwner);
+                k++; }
+          if(marker==false)
+            if(k==0)
+                Console.WriteLine("Автомобиль такого цвета не обнаружен");
+    }
+    }
