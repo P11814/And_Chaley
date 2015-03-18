@@ -1,0 +1,244 @@
+/*  1.Придумать класс, описывающий студента и предусмотреть в нем следующие характеристики: фамилия, имя, отчество, группа , возраст, массив оценок (рваный) по программированию,
+            администрированию и  дизайну. Добавить методы по работе с перечисленными данными: возможность установки/получения оценки, получение среднего балла по заданному предмету,
+            распечатка данных о студенте. */
+            using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lab_4_Ch1
+{
+    class Student
+    {
+        public static byte ctSt;
+        public string name;
+        public string status;
+        public string answerRectora;
+        public enum acadSubject { programming,design,administration};
+        public string acadDiscipline;
+        public int age;
+        public int group;
+        public byte numGrBk;
+        public string isStudentInfo;
+        public int[][] gradebook = new int[3][];
+        public float[] mediaBalAcadSubj = new float[3];
+
+        public Student() { }
+        
+       public Student(string name, int group, int age)
+        {
+            setName(name, group, age);
+            Console.WriteLine("Поздравляем, {0}, ({1} лет), Вы зачислены студентом первого курса академической группы № {2}!", name,age,group);
+        }
+
+        public string student
+        {
+            get { return status; }
+            set
+            {
+                if (value == "programming") { status = "Student"; group = 11814; acadDiscipline = "programming"; answerRectora = "Congratulations!"; }
+                else if (value == "administration") { status = "Student"; group = 21814; acadDiscipline = "administration"; answerRectora = "Congratulations!"; }
+                else if (value == "design") { status = "Student"; group = 31814; acadDiscipline = "design"; answerRectora = "Congratulations!"; }
+                else
+                { status = "No Student"; answerRectora = "Сочувствуем! Гуд Бай!"; }
+                }
+        }
+
+       public void setName(string studentName, int studentGroup, int studentAge)
+        {
+            this.name = studentName;
+            this.group = studentGroup;
+            this.age = studentAge;
+        }
+        public void SetMark(int newMark, int acadSubj)
+        {
+            
+            int numMarks = gradebook[acadSubj].Length;
+            int[] temp = new int[numMarks];
+            for(int i=0; i<numMarks; i++) 
+                temp[i]=gradebook[acadSubj][i];
+
+            gradebook[acadSubj] = new int[numMarks+1];
+            for (int i = 0; i < numMarks-1; i++)
+                gradebook[acadSubj][i] = temp[i];
+            gradebook[acadSubj][numMarks-1]=newMark;
+        }
+
+        public void SetMediaBall()
+        {
+            float numMarks, sumBal; int i;
+           for (i = 0,  numMarks = 0, sumBal = 0;  i < 3; i++)
+            {
+                foreach (int marksOfacademic in gradebook[i])
+                {
+                    if (marksOfacademic == 0) break;
+                    numMarks += 1;
+                    sumBal += marksOfacademic;
+                }
+                mediaBalAcadSubj[i] = sumBal / numMarks;
+            }
+          }
+        public void GetMark(int acadSubj, string _name)
+        {
+            float numMarks = 0, sumBal=0;
+           Console.Write("Оценки по предмету\"{0}\" студента {1}: ", acadDiscipline, _name);
+            foreach (int marksOfacademic in gradebook[acadSubj])
+            {
+                if (marksOfacademic == 0) break;
+                Console.Write("{0} ",marksOfacademic);
+                numMarks += 1;
+                sumBal += marksOfacademic;
+            }
+            mediaBalAcadSubj[acadSubj] = sumBal / numMarks;
+            Console.WriteLine("\nСредний балл по предмету: \"{0}\": {1:f2}",acadDiscipline ,mediaBalAcadSubj[acadSubj]);
+         }
+
+        public void GetDataStudent()
+        {
+          Console.Write("Студент: {0} Академическая группа № {1} Зачётная книжка№ {2}.\n\nСредние баллы по предметам:\n\"Программирование\": {3:f2}\n\"Администрирование\": {4:f2}\n\"Дизайн\": {5:f2}\n\n",name, group, numGrBk, mediaBalAcadSubj[0],mediaBalAcadSubj[1],mediaBalAcadSubj[2]);
+        }
+
+     }
+    class Program
+    {
+       static void Main(string[] args)
+        {
+         Console.SetWindowSize(121, 50);
+            string _name, _acadCourse; int stu = 0; 
+            Console.WriteLine("Установите план набора студентов в разумных пределах.");
+            Student.ctSt = byte.Parse(Console.ReadLine());
+            Console.WriteLine("Уважаемый абитуриент! Для зачисления в студенты СТРОГО следуйте инструкциям на экране!\n");
+
+            Student[] entrant = new Student[Student.ctSt];
+            Console.WriteLine("Представьтесь, пожалуйста!");
+            Console.WriteLine("P.S.:(Закончить приём студентов можно досрочно, введя вместо имени \"stop\")");
+            for (int i = 0; i != Student.ctSt && i < Student.ctSt; i++)
+            {
+             _name=Console.ReadLine();
+             switch (_name)
+             {
+                 case "stop":
+                     {
+                         i = Student.ctSt;
+                         goto nextstep;
+                     }
+                    default:
+                     break;
+             }
+            Console.Write("Уважаемый, {0}, ",_name);
+            Console.WriteLine("Для зачисления в студенты необходимо пройти маленький тест:\nНапишите правильно ПО-АНГЛИЙСКИ академическую дисциплину, которую желаете изучать:\"Программирование\", \"Администрирование\" или \"Дизайн\"");
+            _acadCourse=Console.ReadLine();
+            entrant[i] = new Student();
+            entrant[i].student = _acadCourse;
+            Console.WriteLine("По итогам Вашего ответа Ваш статус: {0}! {1} Номер Вашей группы №{2}", entrant[i].status,entrant[i].answerRectora, entrant[i].group);
+            switch (entrant[i].status)
+            {
+                case "Student":
+                    entrant[i].name = _name;
+                    Console.WriteLine("Уважаемый, {0}, Вы в деканате. Заполним анкету. Введите Ваш возраст, пожалуйста.", entrant[i].name);
+                    entrant[i].age = int.Parse(Console.ReadLine());
+                    entrant[i].numGrBk = (byte)(i+1);
+                    Console.WriteLine("Спасибо! Вам выдаётся зачётка №{0} . Проходите в аудиторию, пожалуйста, для прохождения тестов", entrant[i].numGrBk);
+                        entrant[i].gradebook[i] = new int[1];
+                    stu++;
+                    break;
+                case "No Student":
+                    Console.WriteLine("Уважаемый, {0}, Мы с Вами прощаемся. Следующий!",_name);
+                    i--;
+                    break;
+             }
+                if(i<Student.ctSt-1)
+            Console.WriteLine("\nСледующий!\nПредставьтесь, пожалуйста!");
+               // string stop=Console.ReadLine();
+        nextstep: ;
+            }
+            Console.WriteLine("\nНабор окончен! Спасибо за внимание. Всем досвидания, кроме студентов.");
+            Console.WriteLine("\nПо итогам вступительных экзаменов на обучение зачислены следующие студенты:");
+            string lineInfo = String.Format("\n{0,-12}  {1,3} {2,8}\t{3,-10}  {4,2}\n", "ФИО студента:", "возраст","группа:", "специализация:", "зачётка №:");
+            Console.WriteLine(lineInfo);
+            int k = 0;
+            foreach (Student students in entrant) { 
+               students.isStudentInfo = string.Format("{0,-16}{1,3} {2,8}\t{3,-10}\t\t{4,-2}", students.name, students.age, students.group, students.acadDiscipline,students.numGrBk);
+            Console.WriteLine(students.isStudentInfo); k++;
+            }
+            
+            Console.WriteLine("\nВнимание вопросы теста: \"Три основных свойства любого языка программирования, поддерживающего метод \"ООП\" ?");
+            Console.WriteLine("Отвечает студент {0}\nВыбрать верный ответ и ввести его номер: Первое свойство: \n\t\t\t1-дивергенция;\n\t\t\t2-протекция;\n\t\t\t3-инкапсуляция\n\t\t\t4-аллопеция ?", entrant[0].name);
+            int[] answerStuTest =new int [3];
+            answerStuTest[0] = int.Parse(Console.ReadLine());
+            switch (answerStuTest[0])
+            {
+                case 3: break;
+                default: answerStuTest[0] = 0;
+                    break; 
+            }
+            Console.WriteLine("Второе свойство: \n\t\t\t1-исследование;\n\t\t\t2-преследование;\n\t\t\t3-наследование\n\t\t\t4-собеседование ?");
+             answerStuTest[1] = int.Parse(Console.ReadLine());
+            switch (answerStuTest[1])
+            {
+                case 3: break;
+                default:
+                    answerStuTest[1] = 0;
+                    break;
+            }
+            Console.WriteLine("Третье свойство: \n\t\t\t1-авантюризм;\n\t\t\t2-абстракционизм;\n\t\t\t3-волюнтаризм\n\t\t\t4-полиморфизм ?");
+            answerStuTest[2] = int.Parse(Console.ReadLine());
+            switch (answerStuTest[2])
+            {
+                case 4: break;
+                default:
+                    answerStuTest[2] = 0;
+                    break;
+            }
+            int marked = 0;
+            foreach (int mark in answerStuTest)
+            {
+                
+                marked += mark;
+            }
+            Console.WriteLine("По итогам теста Вы получили оценку: {0}",marked);
+            entrant[0].SetMark(marked, 0); 
+           // Console.ReadKey();
+            entrant[0].GetMark(0,entrant[0].name);
+            Console.WriteLine("Далее студенты на протяжении семестра получали оценки. Вы можете их просмотреть.\n");
+            int coloumn;
+            Random rand=new Random();
+           for (int m = 0; m < stu; m++)
+            {
+                Console.WriteLine(entrant[m].name);
+              for (int i = 0; i < 3; i++)   // Организация массива оценок и заполнение его элементов
+                {
+                    bool firstMark = true;
+                    coloumn = rand.Next(4, 10);
+                    entrant[m].gradebook[i] = new int[coloumn];
+                    for (int j = 0; j < coloumn; j++)
+                    {
+                        if (j == 0 && m == 0 && i == 0) firstMark = false;
+                        if (firstMark)
+                            entrant[m].gradebook[i][j] = rand.Next(3, 10);
+                            entrant[0].gradebook[0][0] = marked;
+                        Console.Write("{0}; ", entrant[m].gradebook[i][j]);
+                        if (j == (coloumn - 1))
+                            Console.WriteLine(); firstMark = true;
+                    }
+                }
+            }
+            Console.WriteLine();
+            
+            entrant[0].GetMark(0,entrant[0].name);
+            Console.WriteLine("Выставлены оценки, подведены итоги семестра.");
+            for(int medB = 0; medB < stu; medB++)
+                entrant[medB].SetMediaBall();
+            Console.WriteLine("Просмотр обшей ведомости успеваемости студентов:\n"+"Введите имя и фамилию студента для просмотра индивидукльных данных:");
+           string searhStudent= Console.ReadLine();
+            Console.WriteLine();
+            for(int medB = 0; medB < stu; medB++)
+            {
+                if (entrant[medB].name == searhStudent)
+                    entrant[medB].GetDataStudent();
+            }
+           //Console.ReadKey(); 
+        }
+     }
+}
