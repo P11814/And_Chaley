@@ -66,7 +66,7 @@ namespace LaabHomeTask_1
             Console.WriteLine("Введите день недели на русском языке(lower case), нажимая в конце \"Enter\":");
             dayПоРусски=Console.ReadLine();
             Console.WriteLine(isDayOfWeek(dayПоРусски));
- //ЗАЧТЕНО           
+ //ЗАЧТЕНО            
 //Задание 6. Операторы циклов (использовать  операторы while, do-while и for) Вывести 19 значений выражения: X*X+2 в интервале: -2..0
             float res = 0.0F; float x1=-2.0F, dltx=0.1F;
             while (x1 <= 0)
