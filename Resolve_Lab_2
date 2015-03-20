@@ -63,7 +63,7 @@ namespace Lab_2_StringArray
                 }
              //  Console.Write("{0}; ", letters);    
              }
-
+ 
             Console.Write("\nmin слово содержит= {0} букв with index= {1};\nmax слово содержит= {2} букв with index= {3}.", min, indMin, max, indMax);
             Console.Write("\n\nСамое короткое слово: \"");
             int posMinWord=0;
