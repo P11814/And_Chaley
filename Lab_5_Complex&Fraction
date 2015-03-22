@@ -1,0 +1,264 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+/*  ЛР_5_Перегрузка операторов(2 задачи)
+       1.-Реализовать класс для хранения комплексного числа.Произвести перегрузку всех необходимых операторов для компиляции
+   следующего фрагмента кода: Complex z = new Complex(1, 1);
+                              Complex z1; 
+                              z1=z-(z*z*z-1)/(3*z*z);
+                              Console.WriteLine("z1= {0}",z1); */
+
+namespace Complex
+{
+    public struct Complex
+    {
+        public int real;
+        public int imaginary;
+
+        public Complex(int real, int imaginary)
+        {
+            this.real = real;
+            this.imaginary = imaginary;
+        }
+
+        // Перегружаем оператор (+), под операции над комплексными числами
+        public static Complex operator +(Complex c1, Complex c2)
+        {
+            return new Complex(c1.real + c2.real, c1.imaginary + c2.imaginary);
+        }
+
+        // Перегружаем оператор (-), под операции над комплексными числами
+        public static Complex operator -(Complex c1, Complex c2)
+        {
+            return new Complex(c1.real - c2.real, c1.imaginary - c2.imaginary);
+        }
+        // Перегружаем оператор (-), под операции комплексного числа с действительным
+        public static Complex operator -(Complex c, int num)
+        {
+            return new Complex(c.real - num, c.imaginary);
+        }
+
+        // Перегружаем оператор (/), под операции над комплексными числами
+        public static Complex operator /(Complex c1, Complex c2)
+        {
+            return new Complex((c1.real*c2.real + c1.imaginary*c2.imaginary)/(c2.real*c2.real+c2.imaginary*c2.imaginary), (c1.imaginary*c2.real - c1.real*c2.imaginary)/(c2.real * c2.real + c2.imaginary * c2.imaginary));
+        }
+        // Перегружаем оператор (*), под операции комплексного числа с действительным
+        public static Complex operator *(int num, Complex c)
+        {
+            return new Complex(c.real * num, c.imaginary);
+        }
+        // Перегружаем оператор (*), под операции над комплексными числами
+        public static Complex operator *(Complex c1, Complex c2)
+        {
+            return new Complex(c1.real * c2.real - c1.imaginary * c2.imaginary, c1.imaginary * c2.real + c1.real * c2.imaginary);
+        }
+
+        // Перегружаем метод ToString() под вывод комплексных чисел  
+        public override string ToString()
+        {
+            return (String.Format("{0} + {1}i", real, imaginary));
+        }
+    }
+    /* Разработать клaсс Fraction, представляющий простую дробь. В классе предусмотреть 2 поля: числитель и знаменатель дроби.
+    Выполнить перегрузку следующих операторов: +,-,*,/, ==,!=, <,>, true,false. Арифметические действия и сравнения производятся
+    по правилам работы с дробями. Оператор true возвращает true, если дробь правильная (знаменатель больше числителя). Оператор 
+    false возвращает false, если дробь неправильная (числитель больше знаменателя). Выполнить перегрузку операторов, необходимых
+    для успешной компиляции следующего кода: Fraction f=new Fraction(3,40);
+                                             int a=10; double d=1.5;
+                                             Fraction f1 = f*a;
+                                             Fraction f2 = a*f;
+                                             Fraction f3 = f+d; */
+    class Fraction
+    {
+        int numerator;
+        int denominator;
+        public Fraction(int num, int den)
+        {
+            numerator = num;
+            denominator = den;
+        }
+        public Fraction(double decFrac)
+        {
+            int n = 0, decim = 1;
+            int num = (int)decFrac;
+            double tempPasZero = decFrac - num;
+            while (tempPasZero != 0)
+            {
+                tempPasZero *= 10;
+                n += (int)tempPasZero;
+                tempPasZero -= n;
+                decim *= 10; n *= 10;
+            }
+            numerator = num * decim + n / 10;
+            denominator = decim;
+        }
+        // Перегружаем оператор (*), под операции над дробями
+        public static Fraction operator *(Fraction dr1, Fraction dr2)
+        {
+            return new Fraction(dr1.numerator * dr2.numerator, dr1.denominator * dr2.denominator);
+        }
+        // Перегружаем оператор (*), под операции целого числа с дробью
+        public static Fraction operator *(int a, Fraction dr)
+        {
+            return new Fraction(dr.numerator * a, dr.denominator);
+        }
+        // Перегружаем оператор (*), под операции дробей с целым числом
+        public static Fraction operator *(Fraction dr, int a)
+        {
+            return new Fraction(dr.numerator * a, dr.denominator);
+        }
+        // Перегружаем оператор (/), под операции над дробями
+        public static Fraction operator /(Fraction dr1, Fraction dr2)
+        {
+            return new Fraction(dr1.numerator * dr2.denominator, dr1.denominator * dr2.numerator);
+        }
+        // Перегружаем оператор (+), под операции над дробями
+        // Перегружаем оператор (-), под операции над дробями
+        // For this case I would create a function to find LCM
+        public static int determineLCM(int a, int b)
+        {
+            int num1, num2;
+            if (a > b)
+            {
+                num1 = a; num2 = b;
+            }
+            else
+            {
+                num1 = b; num2 = a;
+            }
+
+            for (int i = 1; i <= num2; i++)
+            {
+                if ((num1 * i) % num2 == 0)
+                {
+                    return i * num1;
+                }
+            }
+            return num1 * num2;
+        }
+        public static Fraction operator +(Fraction dr1, Fraction dr2)
+        {
+            int lcm = determineLCM(dr1.denominator, dr2.denominator);
+            return new Fraction((dr1.numerator * lcm / dr1.denominator + dr2.numerator * lcm / dr2.denominator), lcm);
+        }
+        // Перегружаем оператор (+), под операции дробей с целым числом
+        public static Fraction operator +(Fraction dr, int a)
+        {
+            return new Fraction((dr.numerator + a * dr.denominator), dr.denominator);
+        }
+        // Перегружаем оператор (+), под операции дробей с числом - десятичной дробью
+        public static Fraction operator +(Fraction dr, double a)
+        {
+            Fraction convertDoubleNum = new Fraction(a);
+            Fraction res = dr + convertDoubleNum;
+            return res;
+        }
+        public static Fraction operator -(Fraction dr1, Fraction dr2)
+        {
+            int lcm = determineLCM(dr1.denominator, dr2.denominator);
+            return new Fraction((dr1.numerator * lcm / dr1.denominator - dr2.numerator * lcm / dr2.denominator), lcm);
+        }
+
+        // Перегружаем оператор (==), под операции над дробями
+        // Перегружаем оператор (!=), под операции над дробями
+        public static bool operator ==(Fraction dr1, Fraction dr2)
+        {
+            int lcm = determineLCM(dr1.denominator, dr2.denominator);
+            if (dr1.numerator * lcm / dr1.denominator == dr2.numerator * lcm / dr2.denominator)
+                return true;
+            else return false;
+        }
+        public static bool operator !=(Fraction dr1, Fraction dr2)
+        {
+            int lcm = determineLCM(dr1.denominator, dr2.denominator);
+            if (dr1.numerator * lcm / dr1.denominator != dr2.numerator * lcm / dr2.denominator)
+                return true;
+            else return false;
+        }
+        // Перегружаем оператор (<), под операции над дробями
+        // Перегружаем оператор (>), под операции над дробями
+        public static bool operator >(Fraction dr1, Fraction dr2)
+        {
+            int lcm = determineLCM(dr1.denominator, dr2.denominator);
+            if (dr1.numerator * lcm / dr1.denominator > dr2.numerator * lcm / dr2.denominator)
+                return true;
+            else return false;
+        }
+        public static bool operator <(Fraction dr1, Fraction dr2)
+        {
+            int lcm = determineLCM(dr1.denominator, dr2.denominator);
+            if (dr1.numerator * lcm / dr1.denominator < dr2.numerator * lcm / dr2.denominator)
+                return true;
+            else return false;
+        }
+        // Перегружаем оператор (true), под операции над дробями
+        // Перегружаем оператор (false), под операции над дробями
+        public static bool operator true(Fraction dr)
+        {
+            if (dr.numerator < dr.denominator) { 
+            Console.WriteLine("Дробь - правильная!");
+            return true;}
+            else 
+             Console.WriteLine("Дробь - неправильная!");
+            return false;
+        }
+        public static bool operator false(Fraction dr)
+        {
+            if (dr.numerator > dr.denominator)
+            {
+                Console.WriteLine("Дробь - неправильная!");
+                return false;
+            }
+            else
+                Console.WriteLine("Дробь - правильная!");
+            return true;
+        }
+        // Перегружаем метод ToString() под вывод дробей
+        public override string ToString()
+        {
+            return (String.Format("{0}/{1}", numerator, denominator));
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Complex num1 = new Complex(1, 1);
+            Complex num2 = new Complex(1, 1);
+
+            // Проверим всё поэтапно.
+            Complex tempResult;
+            num1=num1*num1*num1-1;
+            num2 = 3 * num2 * num2;
+            tempResult = num1 / num2;
+            // Print части выражений с использованием ToString method.  
+            Console.WriteLine("First complex order of numbers:  {0}", num1);
+            Console.WriteLine("Second complex order of numbers: {0}", num2);
+            Console.WriteLine("TempResult of the two mathematical expressions: {0}", tempResult);
+
+            Complex z = new Complex(1, 1);
+            Complex z1;
+            z1 = z - (z * z * z - 1) / (3 * z * z);
+            Console.WriteLine("z1= {0}", z1);
+
+            // Задержим console window открытым in debug mode.
+             Console.WriteLine("Press any key to continue.");
+             Console.ReadKey(true);
+            // Это блок для демонстрации операций с дробями:
+            Fraction f = new Fraction(3, 40);
+            int a = 10; double d = 1.5;
+            Fraction f1 = f * a;
+            Fraction f2 = a * f;
+            Fraction f3 = f + d;
+            Console.WriteLine("\nf1 = "+f1);
+            Console.WriteLine("f2 = "+f2);
+            Console.WriteLine("f3 = "+f3);
+            Console.ReadKey();
+        }
+    }
+}
