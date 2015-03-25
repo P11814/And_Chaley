@@ -1,0 +1,178 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+/* ЛР 10. Работа с файлами и каталогами
+Задание 1. Чтение и запись в файл.
+Написать приложение, позволяющее: •	создать новый файл с именем «Day17.txt». В случае наличия файла с таким именем  –  вывести сообщение; •	открыть и прочесть файл с именем «Day17.txt». 
+В случае отсутствия – вывести сообщение об отсутствии; •записать форматированную информацию в файл; Структура записываемой информации: Исходные данные: двумерный массив дробных чисел.
+                                                                                                                                                        двумерный массив целых чисел.
+   – фамилия, имя, отчество, дата рождения
+   – с новой строки  количество строк и столбцов массива дробных чисел.
+   –  с новой строки  значения элементов двумерного массива (каждая строка массива в новой строке файла). 
+   – с новой строки  количество строк и столбцов массива целых чисел.
+   – с новой строки  двумерный массив  целых чисел, записанных в одну строку. 
+–  с новой строки  текущая дата.
+•	прочесть информацию из файла и преобразовать ее в соответствии с исходной структурой. Реализовать простейшее меню. c:\temp\  https://msdn.microsoft.com/ru-ru/library/system.io.filestream(v=vs.90).aspx*/
+
+namespace Files_and_Directories
+{
+    class Program
+    {
+        const string exFile = @"Day17.txt";
+        public static string LastName;
+        public static string FirstName;
+        public static int SizeIntArray;
+        public static int[,] ArrayInt;
+        public static int numStrIntArr;
+        public static int numStlbIntArr;
+        public static double[,] ArrayDouble;
+        public static double numStrDoubleArr;
+        public static double numStlbDoubleArr;
+        public static double SizeDoubleArray;
+        public static string lastName
+        {
+            get { return LastName; }
+            private set { 
+                //Console.WriteLine("Input your LastName, please.");
+                LastName=value;}
+         }
+        public static string firstName
+        {
+            get { return FirstName; }
+            private set
+            { 
+                //Console.WriteLine("Input your LastName, please.");
+               FirstName = value;
+            }
+        }
+
+        public static void createArrayInt(int _str,int _stlb)
+        {
+            ArrayInt = new int[_str, _stlb];
+            SizeIntArray = ArrayInt.Length;
+            numStrIntArr = _str;
+            numStlbIntArr = _stlb;
+           // Console.WriteLine("\nКоличество строк массива целых чисел = {0}; Количество столбцов массива целых чисел = {1}", numStrIntArr, numStlbIntArr);
+            Console.WriteLine("Size of IntArray = "+SizeIntArray);
+           // Console.ReadKey(true);
+        }
+
+        public static void createArrayDouble(int _str, int _stlb)
+        {
+            ArrayDouble = new double[_str, _stlb];
+            SizeDoubleArray = ArrayDouble.Length;
+            numStrDoubleArr = _str;
+            numStlbDoubleArr = _stlb;
+           // Console.WriteLine("\nКоличество строк массива дробных чисел = {0}; Количество столбцов массива дробных чисел = {1}", numStrDoubleArr, numStlbDoubleArr);
+            Console.WriteLine("Size of DoubleArray = " + SizeDoubleArray);
+            // Console.ReadKey(true);
+        }
+        public static void Main()
+        {
+            Console.SetWindowSize(111, 40);
+            // Control of the file existing.
+            if (File.Exists(exFile))
+            {
+                Console.WriteLine("The file {0} already exists!\nWhat we'll be doing about this {0}? ", exFile);
+                Console.WriteLine("Input \"start\" to continue or \"stop\" to stop the program");
+                string nextStep;
+                nextStep = Console.ReadLine();
+                switch (nextStep)
+                {
+                    case "start":
+                        Console.WriteLine("We continue with existing file!");
+                        // File.Delete(exFile);
+                        break;
+                    case "stop":
+                        Console.WriteLine("We stop execution our program, Bye!");
+                        Console.ReadKey(true);
+                        return;
+                    default:
+                        Console.WriteLine("Something wrong and We stop execution our program, Bye!");
+                        Console.ReadKey(true);
+                        return;
+                }
+            }
+            else
+            {
+                Console.WriteLine("File not exists yet. And then we try to create it. Let's go forward!");
+                Console.ReadKey(true);
+            }
+            
+            //Create the file.
+           using (FileStream fs = File.Create(exFile))
+           {
+                Console.WriteLine("Input your LastName, please.");
+                Program.lastName = Console.ReadLine();
+                Console.WriteLine("Input your FirstName, please.");
+                Program.firstName = Console.ReadLine();
+                Console.WriteLine("Input date of your birthday, please.");
+                string bithday = Console.ReadLine();
+                AddText(fs, LastName);
+                AddText(fs, " " + FirstName);
+                AddText(fs, " date of bithday: "+bithday);
+                                
+                Console.WriteLine("Давайте создадим двумерные массивы дробных чисел и целых чисел!\nВначале для дробных чисел введите количество строк, жмите \"Enter\", затем количество столбцов.");
+                int str = int.Parse(Console.ReadLine()), stlb = int.Parse(Console.ReadLine());
+                Random rand = new Random();
+                Program.createArrayDouble(str, stlb);
+                AddText(fs,"\nКоличество строк массива дробных чисел = "+ numStrDoubleArr+";"+ "Количество столбцов массива дробных чисел = "+ numStlbDoubleArr+".\n");
+                for (int i = 0, N = 0,j; i < Program.numStrDoubleArr; i++, N++)
+                {
+                    for (j = 0; j < Program.numStlbDoubleArr; j++)
+                    { 
+                        AddText(fs, " "+ Math.Round(Convert.ToDouble(ArrayDouble[i,j]=rand.NextDouble()*5),2).ToString()+" ");
+                    //Split the output according number of columns.
+                    if ((j+1)%stlb == 0)
+                    {
+                        AddText(fs, "\r\n");
+                    }
+                    }
+                }
+                AddText(fs, "\n");
+                Console.WriteLine("А сейчас для массива целых чисел: Введите количество строк, жмите \"Enter\", затем количество столбцов.");
+                str = int.Parse(Console.ReadLine()); stlb = int.Parse(Console.ReadLine());
+                Program.createArrayInt(str,stlb);
+                AddText(fs, "\nКоличество строк массива целых чисел = " + numStrIntArr + ";" + "Количество столбцов массива целых чисел = " + numStlbIntArr + ".\n");
+                for (int i = 0,j; i < Program.numStrIntArr; i++)
+                {
+                    if (i == 0) AddText(fs, "стр0:");
+                    for (j = 0; j < Program.numStlbIntArr; j++)
+                    { 
+                    AddText(fs, Convert.ToInt32(i).ToString());
+                        // И так можно "распарсить" строку:
+                        if (Math.IEEERemainder(j + 1, stlb) == 0 && i < str - 1)
+                        {
+                            AddText(fs, " стр" + Convert.ToInt32(i + 1).ToString() + ":");
+                        }
+                    }
+                 } 
+                AddText(fs, "\n\nТекущая дата и время: "+ DateTime.Now.ToString());
+
+                
+            }
+
+            //Open the stream and read it back.
+            using (FileStream fs = File.OpenRead(exFile))
+            {
+                byte[] b = new byte[2048];
+                UnicodeEncoding temp = new UnicodeEncoding();
+                while (fs.Read(b, 0, b.Length) > 0)
+                {
+                    Console.WriteLine(temp.GetString(b));
+                }
+            }
+            Console.ReadKey();
+            }
+
+        private static void AddText(FileStream fs, string value)
+            {
+            byte[] info = new UnicodeEncoding().GetBytes(value);
+            fs.Write(info, 0, info.Length);
+             }
+    }
+}
