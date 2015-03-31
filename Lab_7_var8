@@ -1,0 +1,352 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Threading;
+/*Вариант 8 (продемонстрировать работу программы в консольном приложении)
+Создать абстрактный класс Телефонный_справочник с методами, позволяющими вывести на экран информацию о записях в телефонном 
+справочнике, а также определить соответствие записи критерию поиска. Создать производные классы: Персона (фамилия, адрес,
+номер телефона), Организация (название, адрес, телефон, факс, контактное лицо), Друг (фамилия, адрес, номер телефона,
+дата рождения) со своими методами вывода информации на экран, и определения соответствия искомому типу.
+Создать базу (массив) из n записей, вывести полную информацию из базы на экран, а также организовать поиск в базе по фамилии. */
+
+namespace TelephoneDirectory
+{
+    abstract class PhoneBook //:System.Object
+        {
+      // закрытые члены класса: Наименование субъекта (фамилия, имя физ.лица или наименование организации), телефон, дата рождения
+         private string denominationSubj;
+         private string adress;
+         private string telephoneNumber;
+         private String dateOfBirth;
+         internal static int indexOrder = -1; 
+        // закрытый массив запісей справочника
+        internal static object[] dataNotation;
+         protected static int numNotations;
+         // конструстор класса по умолчанію
+         public PhoneBook()
+            {
+                denominationSubj="";
+                adress = "";
+                telephoneNumber = "";
+                dateOfBirth = "data is not known.";
+               // numNotations++;
+            }
+        // конструстор класса, создающий массив записей справочника предполагаемого объёма
+         public static void MakePhoneBook(int _volPhBook)
+        {
+            dataNotation = new PhoneBook[_volPhBook]; 
+        }
+        // свойства для доступа к закрытым членам класса
+        public PhoneBook this[int index]
+        {
+            set { dataNotation[index] = value; }
+            get { return (PhoneBook)dataNotation[index]; }
+        }
+        public string Title
+            {
+                get { return denominationSubj; }
+                set { denominationSubj = value; }
+            }
+
+            public string Adress
+            {
+                get { return adress; }
+                set { adress = value; }
+            }
+            public string Telefon
+            {
+                get { return telephoneNumber; }
+                set { telephoneNumber = value; }
+            }
+
+        public string DateOfBirth
+        {
+            get { return dateOfBirth; }
+            set { dateOfBirth = value; }
+        }
+
+        //статический метод, возвращающий количество записей
+        public static int GetNumOfNotations()
+            {
+                return numNotations;
+            }
+        
+        // абстрактный метод для вывода информации из справочника по видам объектов на экран.
+        public abstract void ShowNotation(int _numNotation);
+        // абстрактный метод для вызова секретаря по заполнению справочника по видам объектов.
+        public abstract object call(object currZap, int i);
+        // реальный метод для вывода информации из справочника на экран по записям в объёме, предоставляемом классом.
+        public void TruncNotation(int _numNotation)
+            {
+                Console.WriteLine("{0} проживает по адресу {1}, родился: \"{2}\", его номер телефона: {3}.", denominationSubj, adress, dateOfBirth, telephoneNumber);
+            }
+        }
+
+    // Создадим интерфейс для согласования учёта записей по категориям справочника
+    internal interface IorderCustoms { void push(object item); }
+
+    class Person : PhoneBook, IorderCustoms
+        {
+        // закрытый массив "незнакомых" граждан
+        private Person [] citizen;
+        private static int numCitizensInPhoneBook = 0;
+        public Person() : base()  { //numCitizensInPhoneBook++;  
+        }
+        public Person(int i)
+        {
+            citizen = new Person[i]; 
+        }
+        // Please, do not pay attention for these block sequences, because I didn't release that branch of code what I meant and supposed to...
+        public void push(object item)
+        {
+            Person[] temp={};
+            if (numCitizensInPhoneBook == citizen.Length - 1)
+                temp = new Person[citizen.Length + 1];
+            for (int i = 0; i < citizen.Length; i++) temp[i] = citizen[i];
+                 citizen = temp;
+                 citizen[numCitizensInPhoneBook] = (Person)item;
+        }
+        
+        public static int GetNumOfCtzn()
+        {
+            return numCitizensInPhoneBook;
+        }
+        //индексатор для доступа к объекту класса
+        public new Person this[int index]
+            {
+                get { return citizen[index]; }
+                set { citizen[index] = value; }
+            }
+            public override string ToString()
+            {
+            return (this.Title + " проживает по адресу: " + this.Adress + " его номер телефона: " + this.Telefon);
+            }
+
+       public override object call(object currZap, int i)
+        {
+            citizen[i] = new Person(); numNotations++; numCitizensInPhoneBook++;
+            Console.WriteLine("Введите информацию по {0}-й записи граждан: ", numCitizensInPhoneBook);
+            Console.Write("Введите фамилию и имя гражданина: ");
+            citizen[i].Title = Console.ReadLine();
+            Console.Write("Адрес: ");
+            citizen[i].Adress = Console.ReadLine();
+            Console.Write("Телефон: ");
+            citizen[i].Telefon = Console.ReadLine();
+            dataNotation[++indexOrder] = new Person(); 
+            dataNotation[indexOrder] = citizen[i];
+            return citizen[i];
+        }
+        public override void ShowNotation(int i)
+        {
+            Console.WriteLine("{0}, проживает по адресу: {1}, его номер телефона: {2}", this.Title, this.Adress, this.Telefon);
+        }
+    }
+
+    class Friend : PhoneBook
+    {
+        private static int numFriendInPhoneBook = 0;
+        // закрытый массив "друзей"
+        private Friend[] friends;
+        public Friend() : base()
+        {
+           // numFriendInPhoneBook++; 
+        }
+                
+        public Friend(int i)
+        {
+            friends = new Friend[i]; 
+        }
+        public static int GetNumOfFriends()
+        {
+            return numFriendInPhoneBook;
+        }
+        //индексатор для доступа к объекту класса
+        public new Friend this[int index]
+        {
+            get { return friends[index]; }
+            set { friends[index] = value; }
+        }
+        public override object call(object currZap, int i)
+        {
+            friends[i] = new Friend(); numNotations++; numFriendInPhoneBook++;
+            Console.WriteLine("Введите информацию по {0}-й записи друзей: ", numFriendInPhoneBook );
+            Console.Write("Введите фамилию и имя гражданина: ");
+            friends[i].Title = Console.ReadLine();
+            Console.Write("Адрес: ");
+            friends[i].Adress = Console.ReadLine();
+            Console.Write("Телефон: ");
+            friends[i].Telefon = Console.ReadLine();
+            Console.Write("Дату рождения: ");
+            friends[i].DateOfBirth = Console.ReadLine();
+            dataNotation[++indexOrder] = new Friend(); 
+            dataNotation[indexOrder] = friends[i];
+            return friends[i];
+        }
+
+        public override string ToString()
+        {
+            return (this.Title + " проживает по адресу: " + this.Adress + " родился: "+ this.DateOfBirth+" его номер телефона: " + this.Telefon);
+        }
+        public override void ShowNotation(int i)
+        {
+            Console.WriteLine("{0}, проживает по адресу: {1}, родился: {2}, его номер телефона: {3}.", this.Title, this.Adress, this.DateOfBirth, this.Telefon);
+        }
+    }
+
+    class Organization : PhoneBook
+    {
+        private static int numOrgnzdInPhoneBook = 0;
+        private string fax;
+        private string clerk;
+        // закрытый массив "организаций"
+        private Organization[] organizations;
+        public Organization() : base()
+        {
+           // numOrgnzdInPhoneBook++; 
+        }
+
+        public Organization(int i)
+        {
+            organizations = new Organization[i];
+        }
+        public static int GetNumOfOrganizations()
+        {
+            return numOrgnzdInPhoneBook;
+        }
+        //индексатор для доступа к объекту класса
+        public new Organization this[int index]
+        {
+            get { return organizations[index]; }
+            set { organizations[index] = value; }
+        }
+        public override object call(object currZap, int i)
+        {
+            organizations[i] = new Organization(); numNotations++; numOrgnzdInPhoneBook++;
+            Console.WriteLine("Введите информацию по {0}-й записи организаций ", numOrgnzdInPhoneBook);
+            Console.Write("Введите наименование организации: ");
+            organizations[i].Title = Console.ReadLine();
+            Console.Write("Адрес: ");
+            organizations[i].Adress = Console.ReadLine();
+            Console.Write("Телефон: ");
+            organizations[i].Telefon = Console.ReadLine();
+            Console.Write("Факс: ");
+            organizations[i].Fax = Console.ReadLine();
+            Console.Write("Введите данные контактного лица организации (фамилию и имя): ");
+            organizations[i].Clerk = Console.ReadLine();
+            dataNotation[++indexOrder] = new Organization(); 
+            dataNotation[indexOrder] = organizations[i];
+            return organizations[i];
+        }
+        public string Fax
+        {
+            get { return fax; }
+            set { fax = value; }
+        }
+        public string Clerk
+        {
+            get { return clerk; }
+            set { clerk = value; }
+        }
+
+        public override string ToString()
+        {
+            return (this.Title + " находится по адресу: " + this.Adress + " номер телефона: " + this.Telefon + " номер факса: " + this.Fax+ " контактное лицо:"+ this.clerk);
+        }
+        public override void ShowNotation(int i)
+        {
+            Console.WriteLine("\"{0}\", находится по адресу: {1}, номер телефона: {2}, номер факса: {3}, контактное лицо: {4}", this.Title, this.Adress, this.Telefon, this.Fax,this.clerk);
+        }
+    }
+    class Program
+        {
+           static void Main()
+            {
+             Console.SetWindowSize(110, 30);
+             int _kolCitizens, _kolFriends, _kolOrganizations, _kolZap;
+             Console.Write("Введите лимит справочника на количество записей \"граждан\": ");
+             _kolCitizens = int.Parse(Console.ReadLine());
+            Console.Write("Введите лимит справочника на количество записей \"друзей\": ");
+            _kolFriends = int.Parse(Console.ReadLine());
+            Console.Write("Введите лимит справочника на количество записей по \"организациям\": ");
+            _kolOrganizations = int.Parse(Console.ReadLine());
+            Console.Write("Итого лимит справочника на количество записей: "+(_kolZap= _kolOrganizations+_kolFriends+_kolCitizens));
+            PhoneBook.MakePhoneBook(_kolZap);
+             Person _citizen  = new Person(_kolCitizens);
+             Friend _friend = new Friend(_kolFriends);
+             Organization _organization = new Organization(_kolOrganizations);
+            // заполнение массива записей
+            Console.WriteLine("\nРушыма! Цiснi на якую-небудзь тэклу.");
+            Console.ReadKey(true);
+             byte k = 0;
+            for (int i = 0; i < _kolCitizens; i++)
+                {
+                   _citizen[i]= (Person)_citizen.call( _citizen, i);
+                    Console.WriteLine("");
+                    Console.WriteLine("Количество записей в телефонном справочнике = {0}\n", PhoneBook.GetNumOfNotations());
+                }
+           
+            for (int i = 0; i < _kolFriends; i++)
+            {
+                _friend[i] = (Friend)_friend.call(_friend, i);
+                Console.WriteLine("");
+                Console.WriteLine("Количество записей в телефонном справочнике = {0}\n", PhoneBook.GetNumOfNotations());
+             }
+           
+            for (int i = 0; i < _kolOrganizations; i++)
+            {
+                _organization[i] = (Organization)_organization.call(_organization, i);
+                Console.WriteLine("");
+                Console.WriteLine("Количество записей в телефонном справочнике = {0}\n", PhoneBook.GetNumOfNotations());
+            }
+            int ordZap = 1; k = 0;
+            Console.WriteLine("Список всех записей:\n");
+                // вывод записей на экран
+                for (int i = 0; i < _kolCitizens; i++)
+                {
+                 Console.Write((ordZap++)+".- ");
+                _citizen[i].ShowNotation(i);
+                //Console.ReadKey();
+                //_citizen[i].TruncNotation(i);
+                }
+            
+            Thread.Sleep(1000);
+            for (int i = 0; i < _kolFriends; i++)
+            {
+                Console.Write((ordZap++) + ".- ");
+                _friend[i].ShowNotation(i);
+             }
+            
+            Thread.Sleep(1000);
+            for (int i = 0; i < _kolOrganizations; i++)
+            {
+                Console.Write((ordZap++) + ".- ");
+               _organization[i].ShowNotation(i);
+            }
+                        
+            Console.WriteLine("\nМожно просмотреть данные по конкретной категории записей справочника:\nВведите фамилию искомого лица или название организации:");
+            string searchZapis= Console.ReadLine();
+            bool stop = true; string theEnd = "stop";
+            while (stop) { 
+             k = 0;
+            foreach (PhoneBook search in PhoneBook.dataNotation)  // поиск записи по фамилии или названию организации
+                if ( search.Title == searchZapis)
+                {
+                    Console.WriteLine("Данные по указанной фамилии (названии организации):\n");
+                    Console.WriteLine(search.ToString()); 
+                    k++;
+                }
+             
+                if (k == 0)
+                    Console.WriteLine("Данные по указанной фамилии (названии организации) не найдены.");
+                Console.WriteLine("Для выхода из процедуры поиска наберите \"stop\".\nЧтобы продолжить поиск: Введите фамилию искомого лица или название организации: ");
+                searchZapis= Console.ReadLine();
+                if (theEnd == searchZapis) stop = false;
+                            }
+            Console.WriteLine("The end");
+            Console.ReadKey(true);
+        }
+    }
+   
+}
