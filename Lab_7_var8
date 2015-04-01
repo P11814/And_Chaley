@@ -19,7 +19,9 @@ namespace TelephoneDirectory
          private string denominationSubj;
          private string adress;
          private string telephoneNumber;
-         private String dateOfBirth;
+         private String dateOfBirth; // обратите внимание, что не всем производным классам нужна дата рождения. 
+         // имеет ли смысл добавлять эту дату в базовый класс?
+         // для дат есть тип DateTime
          internal static int indexOrder = -1; 
         // закрытый массив запісей справочника
         internal static object[] dataNotation;
@@ -282,7 +284,10 @@ namespace TelephoneDirectory
              byte k = 0;
             for (int i = 0; i < _kolCitizens; i++)
                 {
-                   _citizen[i]= (Person)_citizen.call( _citizen, i);
+                   _citizen[i]= (Person)_citizen.call( _citizen, i); // а зачем вы делаете тут явное приведение?
+                   // элемент массива  _citizen итак типа Person. И ссылка на массив типа Person. Тут всегда будет вызван
+                   // метод call класса Person
+                   // другое дело, если бы вы хранили всех Personov в массива типа PhoneBook. Что, собственно, и надо было сделать
                     Console.WriteLine("");
                     Console.WriteLine("Количество записей в телефонном справочнике = {0}\n", PhoneBook.GetNumOfNotations());
                 }
